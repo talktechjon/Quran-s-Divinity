@@ -42,7 +42,7 @@ export const KATHARA_PRESET_1: string[] = [
 
 export const KATHARA_PRESET_2: string[] = [
   'Book', 'Yahya', 'She Camel', 'Isa', 'Miriam', 'Curse', 'Kingdom',
-  'Ibrahim', 'Musa', 'Flame from Smoke', 'Kabaa', 'Word'
+  'Ibrahim', 'Musa', 'Ahmed', 'Kabaa', 'Word'
 ];
 
 
