@@ -98,6 +98,10 @@ const App: React.FC = () => {
   const handleKatharaPulseToggle = () => {
       setIsKatharaPulsing(prev => !prev);
   };
+
+  const handleKatharaReverse = () => {
+    setKatharaPulseDirection(prev => prev === 'forward' ? 'backward' : 'forward');
+  };
   
   const handleKatharaReset = () => {
     setIsKatharaPulsing(false);
@@ -353,6 +357,16 @@ const App: React.FC = () => {
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M10 3.5a1.5 1.5 0 011.5 1.5v1.445A5.002 5.002 0 0116.5 10a1.5 1.5 0 01-3 0 2.002 2.002 0 00-4 0 1.5 1.5 0 01-3 0A5.002 5.002 0 018.5 6.445V5A1.5 1.5 0 0110 3.5zM5 12a1.5 1.5 0 011.5-1.5h7A1.5 1.5 0 0115 12v1.5a1.5 1.5 0 01-1.5 1.5h-7A1.5 1.5 0 015 13.5V12z" />
+                    </svg>
+                </button>
+                <button
+                    onClick={handleKatharaReverse}
+                    className="w-8 h-8 rounded-full bg-black/20 backdrop-blur-sm border border-cyan-500/30 text-cyan-400 flex items-center justify-center transition-all duration-300 hover:bg-cyan-900/50 hover:border-cyan-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                    title="Reverse Pulse Direction"
+                    aria-label="Reverse pulse animation direction"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                 </button>
                 <button
