@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import * as d3 from 'd3';
-import { SliceData } from '../types.ts';
+import { ChapterWithColor } from '../types.ts';
 
 interface MiniKatharaGridProps {
-  chapters: SliceData[];
+  chapters: ChapterWithColor[];
 }
 
 const MiniKatharaGrid: React.FC<MiniKatharaGridProps> = ({ chapters }) => {
@@ -42,7 +42,7 @@ const MiniKatharaGrid: React.FC<MiniKatharaGridProps> = ({ chapters }) => {
     return { nodes, paths, width, height };
   }, []);
   
-  const nodeToChapterMap: Record<number, SliceData | undefined> = {};
+  const nodeToChapterMap: Record<number, ChapterWithColor | undefined> = {};
   if (chapters.length === 12) {
     chapters.forEach((chapter, index) => {
         nodeToChapterMap[index + 1] = chapter;
@@ -53,6 +53,12 @@ const MiniKatharaGrid: React.FC<MiniKatharaGridProps> = ({ chapters }) => {
     <div className="w-48 h-full flex items-center justify-center pointer-events-none">
       <svg viewBox={`0 0 ${layout.width} ${layout.height}`} className="w-full h-full">
         <defs>
+          {chapters.map(chapter => (
+              <radialGradient key={`grad-mini-${chapter.id}`} id={`grad-mini-${chapter.id}`}>
+                  <stop offset="0%" stopColor={chapter.color} stopOpacity="1" />
+                  <stop offset="100%" stopColor={d3.color(chapter.color)?.darker(2).toString()} stopOpacity="1" />
+              </radialGradient>
+          ))}
           <filter id="kathara-glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
             <feMerge>
@@ -72,11 +78,15 @@ const MiniKatharaGrid: React.FC<MiniKatharaGridProps> = ({ chapters }) => {
         <g id="main-nodes">
             {layout.nodes.map(node => {
                 const chapter = nodeToChapterMap[node.id];
+                const chapterColor = chapter ? chapter.color : '#0e7490';
+                const strokeColor = chapter ? d3.color(chapter.color)?.brighter(1.5).toString() : '#67e8f9';
+                const textColor = chapter ? ((d3.color(chapterColor)?.l || 0) > 0.6 ? 'black' : 'white') : 'white';
+
                 return (
                     <g key={node.id} transform={`translate(${node.pos.x}, ${node.pos.y})`} filter="url(#kathara-glow)">
-                        <circle r="12" fill="#0e7490" stroke="#67e8f9" strokeWidth="1" />
+                        <circle r="12" fill={chapter ? `url(#grad-mini-${chapter.id})` : '#0e7490'} stroke={strokeColor} strokeWidth="1" />
                         <text
-                          textAnchor="middle" dominantBaseline="middle" fill="white"
+                          textAnchor="middle" dominantBaseline="middle" fill={textColor}
                           fontSize="10" fontWeight="bold"
                         >
                           {chapter ? chapter.id : ''}

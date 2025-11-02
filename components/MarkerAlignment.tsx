@@ -1,7 +1,7 @@
 import React from 'react';
 import { ICON_DIAL_DATA, SECRET_EMOJI_PATTERN, CHAPTER_DETAILS, MUQATTAT_CHAPTERS, MUQATTAT_LETTERS, MAKKI_ICON_SVG, MADANI_ICON_SVG, TOTAL_SLICES } from '../constants.ts';
 import { getSliceAtPoint } from '../utils.ts';
-import { PlaylistType, SliceData } from '../types.ts';
+import { PlaylistType, ChapterWithColor } from '../types.ts';
 import PlaylistButtons from './PlaylistButtons.tsx';
 
 interface MarkerAlignmentProps {
@@ -13,7 +13,7 @@ interface MarkerAlignmentProps {
     setCustomSequence: (value: string) => void;
     setAnimationMode: (mode: 'play' | 'step' | 'off') => void;
     createPlaylist: (type: PlaylistType, chapterIds: number[]) => void;
-    miniKatharaChapters: SliceData[];
+    miniKatharaChapters: ChapterWithColor[];
 }
 
 const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({ 

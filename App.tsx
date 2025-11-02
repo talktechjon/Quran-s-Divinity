@@ -8,10 +8,10 @@ import VerseFinder from './components/VerseFinder.tsx';
 import SettingsPanel from './components/SettingsPanel.tsx';
 import KatharaGrid from './components/KatharaGrid.tsx';
 import MiniKatharaGrid from './components/MiniKatharaGrid.tsx';
-import { VisualizationHandle, TooltipContent, VerseTooltipContent, ChapterTooltipContent, KatharaNodeTooltipContent, KatharaGateTooltipContent, VerseFinderContent, SliceData } from './types.ts';
+import { VisualizationHandle, TooltipContent, VerseTooltipContent, ChapterTooltipContent, KatharaNodeTooltipContent, KatharaGateTooltipContent, VerseFinderContent, ChapterWithColor } from './types.ts';
 import { TOTAL_SLICES, SLICE_DATA, SECRET_EMOJI_PATTERN, CHAPTER_DETAILS, MUQATTAT_LETTERS, KATHARA_STAGES, KATHARA_GATES, CLOCK_POINTS } from './constants.ts';
 import { getVerse, getFullSurah, getVerseDetails } from './data/verseData.ts';
-import { getSliceAtPoint } from './utils.ts';
+import { getSliceAtPoint, getChapterColor } from './utils.ts';
 import { useIdle } from './hooks/useIdle.ts';
 
 type LocalTranslationData = Record<string, string[]> | null;
@@ -58,9 +58,15 @@ const App: React.FC = () => {
   // Defer updates to the most expensive, off-screen component (Footer)
   const deferredRotation = useDeferredValue(rotation);
   
-  const miniKatharaChapters = useMemo((): SliceData[] => {
+  const miniKatharaChapters = useMemo((): ChapterWithColor[] => {
     if (!isSecretModeActive || visualizationMode !== 'wheel') return [];
-    return CLOCK_POINTS.map(point => getSliceAtPoint(point, rotation));
+    return CLOCK_POINTS.map(point => {
+      const slice = getSliceAtPoint(point, rotation);
+      return {
+        ...slice,
+        color: getChapterColor(slice.id),
+      }
+    });
   }, [rotation, isSecretModeActive, visualizationMode]);
 
   const animateRotation = useCallback((start: number, end: number, duration: number, onComplete?: () => void) => {

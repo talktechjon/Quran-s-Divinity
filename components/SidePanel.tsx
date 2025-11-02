@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { SLICE_DATA, TRIANGLE_POINTS, TOTAL_SLICES, CHAPTER_DETAILS, SECRET_EMOJI_PATTERN, MUQATTAT_CHAPTERS, MUQATTAT_LETTERS, TAFSIR_YOUTUBE_VIDEO_IDS, RECITATION_YOUTUBE_VIDEO_IDS, ENGLISH_RECITATION_YOUTUBE_VIDEO_IDS, MAKKI_ICON_SVG, MADANI_ICON_SVG, KATHARA_PRESET_1, KATHARA_PRESET_2 } from '../constants.ts';
 import { getSliceAtPoint } from '../utils.ts';
-import { PlaylistType, SliceData } from '../types.ts';
+import { PlaylistType, ChapterWithColor } from '../types.ts';
 import PlaylistButtons from './PlaylistButtons.tsx';
 import CustomAnimationControls from './CustomAnimationControls.tsx';
 import ChapterGeometry from './ChapterGeometry.tsx';
@@ -20,7 +20,7 @@ interface SidePanelProps {
   isLowResourceMode: boolean;
   customKatharaLabels: string[];
   setCustomKatharaLabels: (labels: string[]) => void;
-  miniKatharaChapters: SliceData[];
+  miniKatharaChapters: ChapterWithColor[];
 }
 
 const KatharaCustomization: React.FC<{

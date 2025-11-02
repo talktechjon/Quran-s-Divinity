@@ -2,7 +2,7 @@ import React, { useRef, useImperativeHandle, forwardRef, useMemo, useEffect, use
 import * as d3 from 'd3';
 import { SliceData, VisualizationHandle } from '../types.ts';
 import { TOTAL_SLICES, SLICE_DATA, SIZES, TRIANGLE_POINTS, COLORS, ICON_DIAL_DATA, SECRET_EMOJI_PATTERN, MUQATTAT_CHAPTERS } from '../constants.ts';
-import { getSliceAtPoint, polarToCartesian } from '../utils.ts';
+import { getSliceAtPoint, polarToCartesian, getChapterColor } from '../utils.ts';
 import VersePolygon from './VersePolygon.tsx';
 import CentralAnimation from './CentralAnimation.tsx';
 
@@ -115,11 +115,6 @@ const Visualization = forwardRef<VisualizationHandle, VisualizationProps>(({ rot
     }
   }, [rotation, isSpinning]);
 
-
-  const colorScale = d3.scaleLinear<string>()
-    .domain([1, TOTAL_SLICES * 0.25, TOTAL_SLICES * 0.5, TOTAL_SLICES * 0.75, TOTAL_SLICES * 0.875, TOTAL_SLICES])
-    .range(['#87CEFA', '#4682B4', '#FFD700', '#FF4500', '#483D8B', '#87CEFA'])
-    .interpolate(d3.interpolateHcl);
 
   const animateRotation = (start: number, end: number, duration: number, onComplete?: () => void) => {
     if (animationFrameId.current) {
@@ -366,7 +361,7 @@ const Visualization = forwardRef<VisualizationHandle, VisualizationProps>(({ rot
             const startAngle = index * sliceAngle;
             const endAngle = (index + 1) * sliceAngle;
             const midAngle = startAngle + sliceAngle / 2;
-            const sliceColor = colorScale(slice.id);
+            const sliceColor = getChapterColor(slice.id);
             const slicePath = describeDonutSlice(center, center, SIZES.layer1InnerRadius, SIZES.layer1OuterRadius, startAngle, endAngle);
             const sliceTextPos = polarToCartesian(center, center, (SIZES.layer1InnerRadius + SIZES.layer1OuterRadius) / 2, midAngle);
             const heightRatio = slice.blockCount / maxBlockCount;

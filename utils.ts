@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { TOTAL_SLICES, SLICE_DATA } from './constants.ts';
 import type { SliceData } from './types.ts';
 
@@ -43,6 +44,21 @@ export const getSliceAtPoint = (pointValue: number, rotation: number): SliceData
 export const getSliceIdAtPoint = (pointValue: number, rotation: number): number => {
     return getSliceAtPoint(pointValue, rotation).id;
 };
+
+const colorScale = d3.scaleLinear<string>()
+    .domain([1, TOTAL_SLICES * 0.25, TOTAL_SLICES * 0.5, TOTAL_SLICES * 0.75, TOTAL_SLICES * 0.875, TOTAL_SLICES])
+    .range(['#87CEFA', '#4682B4', '#FFD700', '#FF4500', '#483D8B', '#87CEFA'])
+    .interpolate(d3.interpolateHcl);
+
+/**
+ * Generates a consistent color for a given chapter ID.
+ * @param chapterId The ID of the chapter (1-114).
+ * @returns A string representing the color.
+ */
+export const getChapterColor = (chapterId: number): string => {
+    return colorScale(chapterId);
+};
+
 
 /**
  * Processes an array of items by applying an async function to them in batches.

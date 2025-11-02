@@ -4,6 +4,10 @@ export interface SliceData {
   blockCount: number;
 }
 
+export interface ChapterWithColor extends SliceData {
+  color: string;
+}
+
 export interface TrianglePoint {
   type: string;
   value: number;
