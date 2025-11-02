@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useDeferredValue, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useDeferredValue, useEffect, useMemo } from 'react';
 import Visualization from './components/Visualization.tsx';
 import SidePanel from './components/SidePanel.tsx';
 import FooterMarquee from './components/FooterMarquee.tsx';
@@ -7,9 +7,11 @@ import StarryBackground from './components/StarryBackground.tsx';
 import VerseFinder from './components/VerseFinder.tsx';
 import SettingsPanel from './components/SettingsPanel.tsx';
 import KatharaGrid from './components/KatharaGrid.tsx';
-import { VisualizationHandle, TooltipContent, VerseTooltipContent, ChapterTooltipContent, KatharaNodeTooltipContent, KatharaGateTooltipContent, VerseFinderContent } from './types.ts';
-import { TOTAL_SLICES, SLICE_DATA, SECRET_EMOJI_PATTERN, CHAPTER_DETAILS, MUQATTAT_LETTERS, KATHARA_STAGES, KATHARA_GATES } from './constants.ts';
+import MiniKatharaGrid from './components/MiniKatharaGrid.tsx';
+import { VisualizationHandle, TooltipContent, VerseTooltipContent, ChapterTooltipContent, KatharaNodeTooltipContent, KatharaGateTooltipContent, VerseFinderContent, SliceData } from './types.ts';
+import { TOTAL_SLICES, SLICE_DATA, SECRET_EMOJI_PATTERN, CHAPTER_DETAILS, MUQATTAT_LETTERS, KATHARA_STAGES, KATHARA_GATES, CLOCK_POINTS } from './constants.ts';
 import { getVerse, getFullSurah, getVerseDetails } from './data/verseData.ts';
+import { getSliceAtPoint } from './utils.ts';
 import { useIdle } from './hooks/useIdle.ts';
 
 type LocalTranslationData = Record<string, string[]> | null;
@@ -56,6 +58,11 @@ const App: React.FC = () => {
   // Defer updates to the most expensive, off-screen component (Footer)
   const deferredRotation = useDeferredValue(rotation);
   
+  const miniKatharaChapters = useMemo((): SliceData[] => {
+    if (!isSecretModeActive || visualizationMode !== 'wheel') return [];
+    return CLOCK_POINTS.map(point => getSliceAtPoint(point, rotation));
+  }, [rotation, isSecretModeActive, visualizationMode]);
+
   const animateRotation = useCallback((start: number, end: number, duration: number, onComplete?: () => void) => {
     if (animationFrameId.current) {
       cancelAnimationFrame(animationFrameId.current);
@@ -441,21 +448,26 @@ const App: React.FC = () => {
           aria-label="Interactive dial, click to focus and use arrow keys to rotate or spacebar to spin"
         >
           {visualizationMode === 'wheel' ? (
-            <Visualization
-                ref={vizRef}
-                rotation={rotation}
-                iconDialRotation={iconDialRotation}
-                setRotation={setRotation}
-                isSpinning={isSpinning}
-                onSpinStart={() => setIsSpinning(true)}
-                onSpinEnd={() => setIsSpinning(false)}
-                isSecretModeActive={isSecretModeActive}
-                secretEmojiShift={secretEmojiShift}
-                showTooltip={showChapterTooltip}
-                hideTooltip={hideTooltip}
-                onSliceSelect={loadSurahInFinder}
-                isLowResourceMode={isLowResourceMode}
-            />
+            <div className="flex w-full h-full items-center justify-center">
+              {isSecretModeActive && <MiniKatharaGrid chapters={miniKatharaChapters} />}
+              <div className="flex-1 h-full min-w-0">
+                <Visualization
+                    ref={vizRef}
+                    rotation={rotation}
+                    iconDialRotation={iconDialRotation}
+                    setRotation={setRotation}
+                    isSpinning={isSpinning}
+                    onSpinStart={() => setIsSpinning(true)}
+                    onSpinEnd={() => setIsSpinning(false)}
+                    isSecretModeActive={isSecretModeActive}
+                    secretEmojiShift={secretEmojiShift}
+                    showTooltip={showChapterTooltip}
+                    hideTooltip={hideTooltip}
+                    onSliceSelect={loadSurahInFinder}
+                    isLowResourceMode={isLowResourceMode}
+                />
+              </div>
+            </div>
           ) : (
             <KatharaGrid
                 katharaShift={katharaShift}
@@ -480,6 +492,7 @@ const App: React.FC = () => {
           isLowResourceMode={isLowResourceMode}
           customKatharaLabels={customKatharaLabels}
           setCustomKatharaLabels={setCustomKatharaLabels}
+          miniKatharaChapters={miniKatharaChapters}
         />
       </div>
       {visualizationMode === 'wheel' && !isLowResourceMode && <FooterMarquee rotation={deferredRotation} translationMode={translationMode} localTranslationData={localTranslationData} />}

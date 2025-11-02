@@ -159,6 +159,8 @@ export const SECRET_EMOJI_PATTERN: SecretIconData[] = [
     { id: 'p8', position: 9, chapter: 102, emoji: '🐟', imageUrl: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' font-size='80' text-anchor='middle' dominant-baseline='central'%3E🐟%3C/text%3E%3C/svg%3E", description: 'Position 9: Fish' },
 ];
 
+export const CLOCK_POINTS = [1, 11, 20, 30, 39, 49, 58, 68, 77, 87, 96, 106];
+
 export const CHAPTER_DETAILS: ChapterDetails[] = [
     { number: 1, englishName: 'The Key', transliteration: 'Al-Fātiḥah', arabicName: 'ٱلْفَاتِحَة', revelationType: 'Makki', juz: '1' },
     { number: 2, englishName: 'The Heifer', transliteration: 'Al-Baqarah', arabicName: 'البَقَرَة', revelationType: 'Madani', juz: '1-3' },

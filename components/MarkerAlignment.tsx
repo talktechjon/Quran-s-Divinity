@@ -1,7 +1,7 @@
 import React from 'react';
 import { ICON_DIAL_DATA, SECRET_EMOJI_PATTERN, CHAPTER_DETAILS, MUQATTAT_CHAPTERS, MUQATTAT_LETTERS, MAKKI_ICON_SVG, MADANI_ICON_SVG, TOTAL_SLICES } from '../constants.ts';
 import { getSliceAtPoint } from '../utils.ts';
-import { PlaylistType } from '../types.ts';
+import { PlaylistType, SliceData } from '../types.ts';
 import PlaylistButtons from './PlaylistButtons.tsx';
 
 interface MarkerAlignmentProps {
@@ -13,6 +13,7 @@ interface MarkerAlignmentProps {
     setCustomSequence: (value: string) => void;
     setAnimationMode: (mode: 'play' | 'step' | 'off') => void;
     createPlaylist: (type: PlaylistType, chapterIds: number[]) => void;
+    miniKatharaChapters: SliceData[];
 }
 
 const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({ 
@@ -23,7 +24,8 @@ const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({
     setIconDialRotation,
     setCustomSequence,
     setAnimationMode,
-    createPlaylist
+    createPlaylist,
+    miniKatharaChapters
 }) => {
 
     const handleWatchEmojiSequence = (type: PlaylistType) => {
@@ -39,6 +41,12 @@ const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({
         const chapterIds = SECRET_EMOJI_PATTERN.map(marker => {
             return getSliceAtPoint(marker.chapter, rotation).id;
         });
+        createPlaylist(type, chapterIds);
+    };
+
+    const handleWatchKatharaClockSequence = (type: PlaylistType) => {
+        if (!miniKatharaChapters || miniKatharaChapters.length === 0) return;
+        const chapterIds = miniKatharaChapters.map(chapter => chapter.id);
         createPlaylist(type, chapterIds);
     };
 
@@ -91,39 +99,77 @@ const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({
             <div className="w-full h-px bg-gray-500/50 mt-2"></div>
 
             {isSecretModeActive ? (
-                <div className="text-sm text-gray-400 mt-3 space-y-2" aria-label="Secret pattern markers">
-                {SECRET_EMOJI_PATTERN.map((marker, index) => {
-                    const patternSize = SECRET_EMOJI_PATTERN.length;
-                    const shiftedIndex = (index - secretEmojiShift + patternSize) % patternSize;
-                    const emojiData = SECRET_EMOJI_PATTERN[shiftedIndex];
-                    
-                    const slice = getSliceAtPoint(marker.chapter, rotation);
-                    const chapterInfo = CHAPTER_DETAILS[slice.id - 1];
-                    const isMuqattat = MUQATTAT_CHAPTERS.has(slice.id);
-                    const muqattatLetters = MUQATTAT_LETTERS.get(slice.id);
-                    const iconSrc = chapterInfo.revelationType === 'Makki' ? MAKKI_ICON_SVG : MADANI_ICON_SVG;
-                    
-                    return (
-                        <div key={marker.id} className="flex items-center gap-x-3 overflow-hidden">
-                        <span className="text-lg w-6 text-center">{emojiData.emoji}</span>
-                        <div className="flex items-baseline gap-x-3 min-w-0">
-                            <span className="truncate flex items-center gap-1.5" title={`${slice.id}: ${chapterInfo.englishName}`}>
-                                <img src={iconSrc} alt={chapterInfo.revelationType} className="w-3.5 h-3.5 flex-shrink-0" />
-                                <span className={`font-semibold text-gray-300 ${isMuqattat ? 'muqattat-glow' : ''}`}>{slice.id}:</span> {chapterInfo.englishName}
-                            </span>
-                            {muqattatLetters && (
-                                <span 
-                                    className="font-mono text-lg muqattat-glow flex-shrink-0"
-                                    dir="rtl"
-                                >
-                                    {muqattatLetters.join(' ⊙ ')}
+                <>
+                    <div className="text-sm text-gray-400 mt-3 space-y-2" aria-label="Secret pattern markers">
+                    {SECRET_EMOJI_PATTERN.map((marker, index) => {
+                        const patternSize = SECRET_EMOJI_PATTERN.length;
+                        const shiftedIndex = (index - secretEmojiShift + patternSize) % patternSize;
+                        const emojiData = SECRET_EMOJI_PATTERN[shiftedIndex];
+                        
+                        const slice = getSliceAtPoint(marker.chapter, rotation);
+                        const chapterInfo = CHAPTER_DETAILS[slice.id - 1];
+                        const isMuqattat = MUQATTAT_CHAPTERS.has(slice.id);
+                        const muqattatLetters = MUQATTAT_LETTERS.get(slice.id);
+                        const iconSrc = chapterInfo.revelationType === 'Makki' ? MAKKI_ICON_SVG : MADANI_ICON_SVG;
+                        
+                        return (
+                            <div key={marker.id} className="flex items-center gap-x-3 overflow-hidden">
+                            <span className="text-lg w-6 text-center">{emojiData.emoji}</span>
+                            <div className="flex items-baseline gap-x-3 min-w-0">
+                                <span className="truncate flex items-center gap-1.5" title={`${slice.id}: ${chapterInfo.englishName}`}>
+                                    <img src={iconSrc} alt={chapterInfo.revelationType} className="w-3.5 h-3.5 flex-shrink-0" />
+                                    <span className={`font-semibold text-gray-300 ${isMuqattat ? 'muqattat-glow' : ''}`}>{slice.id}:</span> {chapterInfo.englishName}
                                 </span>
-                            )}
+                                {muqattatLetters && (
+                                    <span 
+                                        className="font-mono text-lg muqattat-glow flex-shrink-0"
+                                        dir="rtl"
+                                    >
+                                        {muqattatLetters.join(' ⊙ ')}
+                                    </span>
+                                )}
+                            </div>
+                            </div>
+                        );
+                    })}
+                    </div>
+                    <div className="mt-6">
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold text-cyan-300 tracking-wider">
+                                Kathara Clock Alignment
+                            </h3>
+                            <PlaylistButtons onWatch={handleWatchKatharaClockSequence} />
                         </div>
+                        <div className="w-full h-px bg-cyan-400/30 mt-2"></div>
+                        <div className="text-sm text-gray-400 mt-3 space-y-2" aria-label="Kathara clock markers">
+                            {miniKatharaChapters.map((slice, index) => {
+                                if (!slice) return null;
+                                const chapterInfo = CHAPTER_DETAILS[slice.id - 1];
+                                if (!chapterInfo) return null;
+                                const isMuqattat = MUQATTAT_CHAPTERS.has(slice.id);
+                                const muqattatLetters = MUQATTAT_LETTERS.get(slice.id);
+                                const iconSrc = chapterInfo.revelationType === 'Makki' ? MAKKI_ICON_SVG : MADANI_ICON_SVG;
+                                
+                                return (
+                                    <div key={`kathara-clock-${index}`} className="flex items-center gap-x-3 overflow-hidden">
+                                        <span className="text-xs font-mono w-6 text-center text-gray-500">{index + 1}</span>
+                                        <div className="flex items-baseline gap-x-3 min-w-0">
+                                            <span className="truncate flex items-center gap-1.5" title={`${slice.id}: ${chapterInfo.englishName}`}>
+                                                <img src={iconSrc} alt={chapterInfo.revelationType} className="w-3.5 h-3.5 flex-shrink-0" />
+                                                <span className={`font-semibold text-gray-300 ${isMuqattat ? 'muqattat-glow' : ''}`}>{slice.id}:</span> {chapterInfo.englishName}
+                                            </span>
+                                            {muqattatLetters && (
+                                                <span className="font-mono text-lg muqattat-glow flex-shrink-0" dir="rtl">
+                                                    {muqattatLetters.join(' ⊙ ')}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
-                    );
-                })}
-                </div>
+                    </div>
+                </>
             ) : (
                 <div className="text-xs text-gray-400 mt-3 grid grid-cols-2 gap-x-6" aria-label="Special chapter markers">
                     {/* Column 1: Downward Triangle Markers */}
