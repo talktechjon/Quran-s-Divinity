@@ -36,8 +36,18 @@ export const KATHARA_STAGES: KatharaStage[] = [
 ];
 
 export const KATHARA_PRESET_1: string[] = [
-  'Book', 'Prophet', 'Sign', 'Messenger', 'Mother', 'Fire', 'Abundance',
-  'Trial', 'Submit', 'Sacrifice', 'Return', 'Word'
+  'Book',
+  'Yahya',
+  'Angel | Sign',
+  'Bible | Isa',
+  'Mountain | Miriam',
+  'Pain | Curse',
+  'Zabur | Kingdom',
+  'Ibrahim',
+  'Torah | Musa',
+  'Quran | Ahmed',
+  'Return | Kabaa',
+  'Word | You',
 ];
 
 export const KATHARA_PRESET_2: string[] = [
@@ -466,7 +476,7 @@ export const RECITATION_YOUTUBE_VIDEO_IDS: (string | null)[] = [
   "Phjr_A4R0xA",
   "GqnrxXEapQE",
   "_UM7QJPaDOA",
-  "vQLeVg9LIbQ",
+  "vQLeVgLIbQ",
   "EtIURK77xm0",
   "bKgH3qgZWME",
   "TH40BHw3JYM",
