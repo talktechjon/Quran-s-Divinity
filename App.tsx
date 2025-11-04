@@ -8,6 +8,7 @@ import VerseFinder from './components/VerseFinder.tsx';
 import SettingsPanel from './components/SettingsPanel.tsx';
 import KatharaGrid from './components/KatharaGrid.tsx';
 import MiniKatharaGrid from './components/MiniKatharaGrid.tsx';
+import Tutorial from './components/Tutorial.tsx';
 import { VisualizationHandle, TooltipContent, VerseTooltipContent, ChapterTooltipContent, KatharaNodeTooltipContent, KatharaGateTooltipContent, VerseFinderContent, ChapterWithColor } from './types.ts';
 import { TOTAL_SLICES, SLICE_DATA, SECRET_EMOJI_PATTERN, CHAPTER_DETAILS, MUQATTAT_LETTERS, KATHARA_STAGES, KATHARA_GATES, CLOCK_POINTS } from './constants.ts';
 import { getVerse, getFullSurah, getVerseDetails } from './data/verseData.ts';
@@ -28,6 +29,7 @@ const App: React.FC = () => {
   const [isVerseFinderVisible, setIsVerseFinderVisible] = useState(false);
   const [verseFinderContent, setVerseFinderContent] = useState<VerseFinderContent>({ type: 'empty' });
   const [visualizationMode, setVisualizationMode] = useState<'wheel' | 'kathara'>('wheel');
+  const [isTutorialVisible, setIsTutorialVisible] = useState(false);
 
   // --- Kathara Grid State ---
   const [katharaShift, setKatharaShift] = useState(0);
@@ -54,6 +56,14 @@ const App: React.FC = () => {
   const rotationRef = useRef(rotation);
   useEffect(() => { rotationRef.current = rotation; }, [rotation]);
   // --- End Idle Animation State ---
+
+  // Show tutorial on first visit
+  useEffect(() => {
+    const tutorialShown = localStorage.getItem('tutorialShown');
+    if (tutorialShown !== 'true') {
+      setIsTutorialVisible(true);
+    }
+  }, []);
 
   // Defer updates to the most expensive, off-screen component (Footer)
   const deferredRotation = useDeferredValue(rotation);
@@ -425,6 +435,16 @@ const App: React.FC = () => {
               <path d="M19.59 11.41A2 2 0 1 0 21 8H2"/>
             </svg>
           </button>
+          <button 
+            onClick={() => setIsTutorialVisible(true)}
+            className="w-8 h-8 rounded-full bg-black/20 backdrop-blur-sm border border-cyan-500/30 text-cyan-400 flex items-center justify-center transition-all duration-300 hover:bg-cyan-900/50 hover:border-cyan-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+            title="Show Tutorial"
+            aria-label="Show application guide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
         </div>
         <SettingsPanel
           isVisible={isSettingsVisible}
@@ -507,6 +527,7 @@ const App: React.FC = () => {
         content={tooltipContent}
         position={tooltipPosition}
       />
+      <Tutorial isVisible={isTutorialVisible} setIsVisible={setIsTutorialVisible} />
     </main>
   );
 };
