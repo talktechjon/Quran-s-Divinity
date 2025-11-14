@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback, useDeferredValue, useEffect, useMemo } from 'react';
 import Visualization from './components/Visualization.tsx';
 import SidePanel from './components/SidePanel.tsx';
@@ -519,6 +520,7 @@ const App: React.FC = () => {
           customKatharaLabels={customKatharaLabels}
           setCustomKatharaLabels={setCustomKatharaLabels}
           miniKatharaChapters={miniKatharaChapters}
+          katharaShift={katharaShift}
         />
       </div>
       {visualizationMode === 'wheel' && !isLowResourceMode && <FooterMarquee rotation={deferredRotation} translationMode={translationMode} localTranslationData={localTranslationData} />}
@@ -527,6 +529,7 @@ const App: React.FC = () => {
         content={tooltipContent}
         position={tooltipPosition}
       />
+      {/* Fix: Corrected prop passed to the Tutorial component. The state setter is `setIsTutorialVisible`, not `setIsVisible`. */}
       <Tutorial isVisible={isTutorialVisible} setIsVisible={setIsTutorialVisible} />
     </main>
   );

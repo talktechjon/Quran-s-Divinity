@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useLayoutEffect } from 'react';
 import * as d3 from 'd3';
 import { KATHARA_STAGES, SIZES, KATHARA_GATES } from '../constants.ts';
+import KristKrystallahDiagram from './KristKrystallahDiagram.tsx';
 
 interface KatharaGridProps {
   katharaShift: number;
@@ -66,6 +67,21 @@ const KatharaGrid: React.FC<KatharaGridProps> = ({ katharaShift, showTooltip, sh
 
     return { nodes, paths, gates, juzPoints };
   }, []);
+
+  const activeStep = katharaShift % 4;
+  const showKabaahSquare = activeStep === 3;
+
+  const kabaahPoints = useMemo(() => {
+    if (!showKabaahSquare) return "";
+    const points = [
+        layout.nodes[2].pos, // Node 3
+        layout.nodes[3].pos, // Node 4
+        layout.nodes[9].pos, // Node 10
+        layout.nodes[8].pos, // Node 9
+    ];
+    return points.map(p => `${p.x},${p.y}`).join(' ');
+  }, [showKabaahSquare, layout.nodes]);
+
 
   useLayoutEffect(() => {
     if (!svgRef.current) return;
@@ -138,6 +154,21 @@ const KatharaGrid: React.FC<KatharaGridProps> = ({ katharaShift, showTooltip, sh
 
   return (
     <div className="w-full h-full">
+        <style>{`
+            .kabaah-glow {
+                animation: kabaah-pulse 2s infinite ease-in-out;
+            }
+            @keyframes kabaah-pulse {
+                0%, 100% {
+                    filter: drop-shadow(0 0 5px #ffd700);
+                    opacity: 0.7;
+                }
+                50% {
+                    filter: drop-shadow(0 0 15px #ffd700);
+                    opacity: 1;
+                }
+            }
+        `}</style>
         <svg ref={svgRef} viewBox={`0 0 ${SIZES.width} ${SIZES.height}`} className="w-full h-full">
             <defs>
                 {layout.nodes.map(node => (
@@ -148,6 +179,15 @@ const KatharaGrid: React.FC<KatharaGridProps> = ({ katharaShift, showTooltip, sh
                 ))}
             </defs>
             
+            <g id="shadow-grid-paths" opacity="0.2">
+                {layout.paths.map(path => (
+                    <line
+                        key={`shadow-${path.id}`} x1={path.p1.x} y1={path.p1.y} x2={path.p2.x} y2={path.p2.y}
+                        stroke="#22d3ee" strokeWidth="2" strokeLinecap="round"
+                    />
+                ))}
+            </g>
+
             <g id="grid-paths">
                 {layout.paths.map(path => (
                     <line
@@ -194,7 +234,19 @@ const KatharaGrid: React.FC<KatharaGridProps> = ({ katharaShift, showTooltip, sh
                     <circle key={point.id} cx={point.x} cy={point.y} r="2" fill="rgba(255, 255, 255, 0.5)" />
                 ))}
             </g>
+
+            <KristKrystallahDiagram />
             
+            {showKabaahSquare && (
+                <polygon 
+                    points={kabaahPoints}
+                    fill="rgba(255, 215, 0, 0.1)"
+                    stroke="#ffd700"
+                    strokeWidth="2"
+                    className="kabaah-glow"
+                />
+            )}
+
             <g id="main-nodes" />
             
             <g id="gates">

@@ -6,6 +6,7 @@ import PlaylistButtons from './PlaylistButtons.tsx';
 import CustomAnimationControls from './CustomAnimationControls.tsx';
 import ChapterGeometry from './ChapterGeometry.tsx';
 import MarkerAlignment from './MarkerAlignment.tsx';
+import CompletionCycleInfo from './CompletionCycleInfo.tsx';
 
 interface SidePanelProps {
   visualizationMode: 'wheel' | 'kathara';
@@ -21,6 +22,7 @@ interface SidePanelProps {
   customKatharaLabels: string[];
   setCustomKatharaLabels: (labels: string[]) => void;
   miniKatharaChapters: ChapterWithColor[];
+  katharaShift: number;
 }
 
 const KatharaCustomization: React.FC<{
@@ -115,7 +117,8 @@ const SidePanel: React.FC<SidePanelProps> = ({
   isLowResourceMode,
   customKatharaLabels,
   setCustomKatharaLabels,
-  miniKatharaChapters
+  miniKatharaChapters,
+  katharaShift,
 }) => {
   const [customSequence, setCustomSequence] = useState('');
   const [animationMode, setAnimationMode] = useState<'play' | 'step' | 'off'>('off');
@@ -287,6 +290,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
             customKatharaLabels={customKatharaLabels}
             setCustomKatharaLabels={setCustomKatharaLabels}
           />
+          <CompletionCycleInfo katharaShift={katharaShift} />
        </aside>
     );
   }
