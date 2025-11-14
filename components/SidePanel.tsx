@@ -384,6 +384,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                 setAnimationMode={setAnimationMode}
                 createPlaylist={createPlaylist}
                 miniKatharaChapters={miniKatharaChapters}
+                setCustomKatharaLabels={setCustomKatharaLabels}
              />
           </div>
       </div>

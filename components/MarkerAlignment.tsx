@@ -14,6 +14,7 @@ interface MarkerAlignmentProps {
     setAnimationMode: (mode: 'play' | 'step' | 'off') => void;
     createPlaylist: (type: PlaylistType, chapterIds: number[]) => void;
     miniKatharaChapters: ChapterWithColor[];
+    setCustomKatharaLabels: (labels: string[]) => void;
 }
 
 const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({ 
@@ -25,7 +26,8 @@ const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({
     setCustomSequence,
     setAnimationMode,
     createPlaylist,
-    miniKatharaChapters
+    miniKatharaChapters,
+    setCustomKatharaLabels
 }) => {
 
     const handleWatchEmojiSequence = (type: PlaylistType) => {
@@ -57,6 +59,12 @@ const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({
             return slice.id;
         });
         setCustomSequence(chapterIds.join(', '));
+    };
+
+    const handleExportToGrid = () => {
+        if (!miniKatharaChapters || miniKatharaChapters.length === 0) return;
+        const chapterIdsAsStrings = miniKatharaChapters.map(chapter => chapter.id.toString());
+        setCustomKatharaLabels(chapterIdsAsStrings);
     };
 
     const downwardMarkersData = ICON_DIAL_DATA.slice(0, 3);
@@ -138,7 +146,17 @@ const MarkerAlignment: React.FC<MarkerAlignmentProps> = ({
                             <h3 className="text-lg font-semibold text-cyan-300 tracking-wider">
                                 Kathara Clock Alignment
                             </h3>
-                            <PlaylistButtons onWatch={handleWatchKatharaClockSequence} />
+                            <div className="flex items-center space-x-1">
+                                <button
+                                    onClick={handleExportToGrid}
+                                    className="bg-gray-600 hover:bg-cyan-700 text-white font-bold px-3 py-1.5 rounded-md text-xs transition-colors duration-200"
+                                    aria-label="Export Clock Alignment to Kathara Grid labels"
+                                    title="Export Clock Alignment to Kathara Grid labels"
+                                >
+                                    Export
+                                </button>
+                                <PlaylistButtons onWatch={handleWatchKatharaClockSequence} />
+                            </div>
                         </div>
                         <div className="w-full h-px bg-cyan-400/30 mt-2"></div>
                         <div className="text-sm text-gray-400 mt-3 space-y-2" aria-label="Kathara clock markers">
